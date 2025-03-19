@@ -5,11 +5,15 @@ import { useEffect, useState } from 'react'
 import {useSpring, animated} from '@react-spring/native'
 
 import UserCard from '@/components/UserCard';
+import useUser from "../../hooks/useUser"
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen(){
 
+  const user = useUser()
+
+  console.log(user)
 
   return(
     <View>
