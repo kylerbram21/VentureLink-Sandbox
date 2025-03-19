@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { Platform, TouchableOpacity, Text, StyleSheet, } from 'react-native';
+import {View, Platform, TouchableOpacity, Text, StyleSheet, Dimensions } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
 import { IconSymbol } from '@/components/ui/IconSymbol';
@@ -11,11 +11,29 @@ import Profile from './profile';
 import { AntDesign, FontAwesome } from '@expo/vector-icons';
 import Feather from '@expo/vector-icons/Feather'; 
 
+const { width, height } = Dimensions.get("window")
 
+const headerHeight = height / 9
 
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
+
+  const headerOptions ={
+    headerStyle: {
+      backgroundColor: Colors.secondaryColor,
+      height: 120
+    },
+    headerTintColor: '#fff',
+    headerTitleStyle: {
+      fontWeight: 'bold',
+    },
+    headerLeft: ()=> <View style={{display:"flex", height:"100%", flexDirection: "row",  overflow:"hidden"}}><View style={styles.headerLeftContainer}><Text style={styles.headerFont}>Venture Link</Text></View><View style={styles.separator}></View></View>,
+    headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style= {styles.text}>Here</Text></TouchableOpacity>,
+    headerShown: true,
+    tabBarIcon: () => <IconSymbol size={28} name="house.fill" color={Colors.primaryColor} />,
+  
+   }
 
   return (
    
@@ -35,19 +53,7 @@ export default function TabLayout() {
       }}>
       <Tabs.Screen
         name="index"
-        options={{
-          title: 'Home',
-          headerStyle: {
-            backgroundColor: '#000',
-          },
-          headerTintColor: '#fff',
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-          headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style= {styles.text}>Here</Text></TouchableOpacity>,
-          headerShown: true,
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
+        options={{...headerOptions, title:""}}
       />
       <Tabs.Screen
         name="explore"
@@ -60,7 +66,7 @@ export default function TabLayout() {
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style= {styles.text}>Here</Text></TouchableOpacity>,
+          headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style={styles.text}>Here</Text></TouchableOpacity>,
           headerShown: true,
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
@@ -80,7 +86,7 @@ export default function TabLayout() {
           fontWeight: 'bold',
         },
 
-        headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style= {styles.text}>Here</Text></TouchableOpacity>,
+        headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} ><Text style={styles.text}>Here</Text></TouchableOpacity>,
           headerShown: true,
         tabBarIcon: ({ color }) => <Feather name="map-pin" size={24} color={color} />,
       }}
@@ -133,5 +139,36 @@ const styles = StyleSheet.create({
   },
   text:{
     color: "#fff"
+  },
+  headerLeftContainer: {
+      display: "flex",
+      justifyContent: "center",
+      backgroundColor: Colors.primaryColor,
+      width: 170,
+      maxWidth: "auto",
+      height: "100%",
+      padding: 10,
+  },
+  headerFont:{
+    flex: 1,
+    fontSize: 30,
+    fontWeight: 700,
+    color: "#fff",
+    position: "absolute",
+    right: -30,
+    marginBlockEnd: 1,
+    zIndex: 20
+  },
+  separator:{
+    width:0,
+    height:0,
+    borderStyle: "solid",
+    borderRightWidth: 120,
+    borderRightColor: "transparent",
+    borderBottomWidth: headerHeight + 120,
+    borderBottomColor: Colors.primaryColor,
+    borderTopWidth: -headerHeight,
+    zIndex: 10
+    
   }
 })
