@@ -1,13 +1,12 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, ScrollView, Modal} from "react-native";
 import React, {useRef, useState} from 'react'
-import  firestore from "../../firebase"
+import {auth, firestore} from "../../firebase"
 import {addDoc, collection } from "firebase/firestore"
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Colors} from "@/constants/Colors";
 import Dropdown from "../../components/Dropdown"
-import DropdownStates from "@/components/DropdownStates";
 
 export default function Profile(){
 
@@ -82,7 +81,7 @@ export default function Profile(){
     
     const handleSave = async () => {
         
-        const ref = collection(firestore, "messages")
+        const ref = collection(firestore, "userInfo")
         let data = {
             Industry: Industry,
             location: Location,
@@ -99,7 +98,7 @@ export default function Profile(){
         }
     };
 
-    console.log("here")
+   console.log("Super Here")
     
     return(
        <ScrollView>
@@ -127,11 +126,11 @@ export default function Profile(){
             
           </View>
 
-          <View style={styles.boxsize}> 
+          {/* <View style={styles.boxsize}> 
             <Text style={styles.filler}>Pitch Deck</Text>
             <TextInput style={styles.filler} value={pitchDeck} onChange={(evt:any)=> setpitchDeck(evt.target.value)}/>
             
-          </View> 
+          </View>  */}
 
           <View style={{...styles.boxsize, zIndex: 1200, marginBottom: 60,}}>
                   <Dropdown items={startUpLevelOptions} value={startupLevel} setState={setStartupLevel} defaultValue = "Which Stage are you?"/>
