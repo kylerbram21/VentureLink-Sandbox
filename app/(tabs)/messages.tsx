@@ -1,168 +1,213 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
-import {useRef, useState} from 'react'
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from "react-native";
+import {useEffect, useRef, useState} from 'react'
 import  {auth ,firestore} from "../../firebase"
 import {getDoc, query, setDoc, where} from 'firebase/firestore'
 import {signInWithEmailAndPassword} from 'firebase/auth'
 import {doc, addDoc, getDocs, collection, updateDoc} from "firebase/firestore"
+import { Colors } from "@/constants/Colors"
+import useUser from "@/hooks/useUser";
 
-import {v4 as uuidv4} from 'uuid';
-
-
-
+const shrekDaddy = [{id: "1", companyInfo: {name: "Shrek Inc", picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAs_TDUTeHiZQ1tqLJlvItaBOjcmRTeoSbHw&s", messages: ["Shrek is Love, Shrek is Life"]}, investorInfo: {name: "", picture: "", messages: []}}, {id: "2", companyInfo: {name: "Trump Towers", picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/TrumpPortrait.jpg/800px-TrumpPortrait.jpg", messages: []}, investorInfo: {name: "", picture: "", messages: []}}, {id: "3", companyInfo: {name: "Faster than Light", picture: "https://us-tuna-sounds-images.voicemod.net/d748fc13-151a-47d5-b515-c21b41cda87c-1658461428512.jpg", messages: []}, investorInfo: {name: "", picture: "", messages: []}}]
 
 
 export default function Messges(){
-    const [message, setMessage] = useState("")
-    const [userId, setUserId] = useState("")
-    const uId = "sCfbm7In81Rkz3EaHXiCfdyj0th1"
-    
-    const koltenUId = "kioo9ThBTiUrdFoh4mNPKRNZZVC2" 
-   
-    const connectBuisnessInvestor = async () => {
-        
-    
-     const ref = doc(firestore, "users", koltenUId)
-     let companyData = {}
 
-     try{
-         const snapShot = await getDoc(ref)
-         if(snapShot.exists()){
-           companyData = snapShot.data()
-         }
+    const user = useUser()
 
-     }catch(err){
+    const [chatInfo, setChatInfo] = useState([])
 
-     }
-      
-     const newData = {...companyData, match:[...companyData.match, userId]}
-     console.log(newData)
-        
-        try{
-             updateDoc(ref,newData)
-        }catch(err){
-            console.log(err)
+    useEffect(()=> {
+        getData()
+    },[])
+
+
+
+    const getData = async () => {
+
+        const newData = []
+          
+        if(true){
+             for(let i = 0; i < shrekDaddy.length; i++){
+                  
+                 newData.push(shrekDaddy[i].companyInfo)
+             }
+
+             setChatInfo(newData)
+        }else{
+
+            for(let i = 0; i < shrekDaddy.length; i++){
+                  
+                newData.push(shrekDaddy[i].investorInfo)
+            }
+
+            setChatInfo(newData)
         }
+
     }
 
-   const createChatRoom = async (investorId:string, companyId:string) => {
-    
-    const uId = uuidv4();
-    
-    const chatRoomRef = collection(firestore, "chat-rooms", uId)
-    const investorRef = doc(firestore, "users", investorId)
-    const companyRef = doc(firestore, "users", companyId) 
-
-
-    const chatData = {
-                    [userId]: [],  
-                    [koltenUId]: [],            
-                }
-
-        try{
-            await addDoc(chatRoomRef, chatData)
-        }catch(err){
-            console.log(err)
-        }
-   }
-
-    
-
-    function SignIn(){
-  
-        const signInWithGoogle = () => {
-           signInWithEmailAndPassword(auth, "kylerbram21@gmail.com", "test12")
-           .then((userCredential) => {
-               console.log(userCredential.user.uid)
-               setUserId(userCredential.user.uid)
-           }).catch((err)=> {
-                console.log(err)
-           })
-        }
-        
-        return (
-            <TouchableOpacity onPress={signInWithGoogle}>
-                <Text>Sign In</Text>
-            </TouchableOpacity>
-        )
-    }
-   
-
-    function SignOut() {
-        return auth.currentUser && (
-            
-            <TouchableOpacity onPress={() => auth.signOut()}>
-                <Text>Sign out</Text>
-            </TouchableOpacity>
-        )
-    }
-    
-  
-    
-    function ChatMessages(props:any){
-        const{ text, uid } = props.message
-    
-        //const messageClass = uid === auth.currentUser.uid ? 'sent' : 'recieved';
-    
-        return(
-            <View className={'message ${messageClass}'}>
-                <image> source={require('../../assets/images/VentureLinkLogo.webp')}</image>
-                <Text> {text} </Text>
-            </View>
-        )
-    }
-    
-
-    // const sendMessage = async(e) => {
-
-    //     const { uid, photoURL} = auth.currentUser;
-
-    //     await messagesRef.add({
-    //         text: formValue,
-    //         createdAt: firestore.firestore.FieldValue.serverTimestamp(),
-    //         uid,
-    //         photoURL
-    //     })
-
-    //     setFormValue('')
-
-    //     dummy.current.scrollIntoView({ behavior: 'smooth' })
-    // }
-
-    
     return(
-        <View style={styles.filler}>
-          <View>
-          {SignIn()}
-          </View>   
+    <View style={{backgroundColor: Colors.primaryColor}}>
+        <View style={styles.header}>
+            <View style={styles.messageText}>
+                <Text>Active Chats</Text>
+            </View>
+        </View>
+        <View style={styles.emptySpace}>
+        
+        </View>
+        {chatInfo.length > 0 ?
+        <View>
+        {chatInfo.map((item, index)=> {
+              
+            return(
+                <TouchableOpacity
+                  key={`${index}-${item.name}`}
+                >
+                  <View style={styles.profileInfoMainContainer}>
+                    <Text style={{marginRight:1085, fontSize:35}}>{item.name}</Text>
+                        <View>
+                            <Text style={{marginRight:750, fontSize:25, opacity:0.7}}>{item.messages.length > 0 ? item.messages[item.messages.length - 1]: "No Messages Yet"}</Text>
+                        </View>
+        
+                        <View style={styles.circle}>         
+                        <Image style={{ width: 80, height: 80, borderRadius: 180, alignSelf: "center",}} source={{ uri: item.picture}}/>
+                        </View>
+                </View>
+                </TouchableOpacity> 
+            )
+        })}
+        </View>
+       : null}
+        
+    </View>
+    )
 
-          {/* <View>
-            {messages && ChatMessages.map(msg => <ChatMessages key={msg.id} message={msg} />)}
-          </View>
 
-          <View onSubmit={sendMessage}>
-            <TextInput value={formValue} onChange={(e) => setFormValue(e.target.value)}> </TextInput> 
-          </View>*/}
-            <TouchableOpacity
-            >
-                <Text> Sumbit </Text>
-            </TouchableOpacity>
 
-            <View> 
-                <TouchableOpacity onPress={()=> connectBuisnessInvestor()}>
+//     const [message, setMessage] = useState("")
+//     const [userId, setUserId] = useState("")
+//     const uId = "sCfbm7In81Rkz3EaHXiCfdyj0th1"
+    
+//     const koltenUId = "kioo9ThBTiUrdFoh4mNPKRNZZVC2" 
+   
+//     const connectBuisnessInvestor = async () => {
+        
+    
+//      const ref = doc(firestore, "users", koltenUId)
+//      let companyData = {}
+
+//      try{
+//          const snapShot = await getDoc(ref)
+//          if(snapShot.exists()){
+//            companyData = snapShot.data()
+//          }
+
+//      }catch(err){
+
+//      }
+      
+//      const newData = {...companyData, match:[...companyData.match, userId]}
+//      console.log(newData)
+        
+
+    
+
+//     function SignIn(){
+  
+//         const signInWithGoogle = () => {
+//            signInWithEmailAndPassword(auth, "kylerbram21@gmail.com", "test12")
+//            .then((userCredential) => {
+//                console.log(userCredential.user.uid)
+//                setUserId(userCredential.user.uid)
+//            }).catch((err)=> {
+//                 console.log(err)
+//            })
+//         }
+        
+//         return (
+//             <TouchableOpacity onPress={signInWithGoogle}>
+//                 <Text>Sign In</Text>
+//             </TouchableOpacity>
+//         )
+//     }
+   
+
+//     function SignOut() {
+//         return auth.currentUser && (
+            
+//             <TouchableOpacity onPress={() => auth.signOut()}>
+//                 <Text>Sign out</Text>
+//             </TouchableOpacity>
+//         )
+//     }
+    
+  
+    
+//     function ChatMessages(props:any){
+//         const{ text, uid } = props.message
+    
+//         //const messageClass = uid === auth.currentUser.uid ? 'sent' : 'recieved';
+    
+//         return(
+//             <View className={'message ${messageClass}'}>
+//                 <image> source={require('../../assets/images/VentureLinkLogo.webp')}</image>
+//                 <Text> {text} </Text>
+//             </View>
+//         )
+//     }
+    
+
+//     // const sendMessage = async(e) => {
+
+//     //     const { uid, photoURL} = auth.currentUser;
+
+//     //     await messagesRef.add({
+//     //         text: formValue,
+//     //         createdAt: firestore.firestore.FieldValue.serverTimestamp(),
+//     //         uid,
+//     //         photoURL
+//     //     })
+
+//     //     setFormValue('')
+
+//     //     dummy.current.scrollIntoView({ behavior: 'smooth' })
+//     // }
+
+    
+//     return(
+//         <View style={styles.filler}>
+//           <View>
+//           {SignIn()}
+//           </View>   
+
+//           {/* <View>
+//             {messages && ChatMessages.map(msg => <ChatMessages key={msg.id} message={msg} />)}
+//           </View>
+
+//           <View onSubmit={sendMessage}>
+//             <TextInput value={formValue} onChange={(e) => setFormValue(e.target.value)}> </TextInput> 
+//           </View>*/}
+//             <TouchableOpacity
+//             >
+//                 <Text> Sumbit </Text>
+//             </TouchableOpacity>
+
+//             <View> 
+//                 <TouchableOpacity onPress={()=> connectBuisnessInvestor()}>
                     
-                    <Text>Investor wants your Business</Text>
-                </TouchableOpacity>
-            </View>
+//                     <Text>Investor wants your Business</Text>
+//                 </TouchableOpacity>
+//             </View>
 
-            <View>
-            <TouchableOpacity onPress={()=> console.log("Here")}>
-               <Text>I'd Love To Do Buisness!!</Text>
-            </TouchableOpacity>
-            </View>
-          </View>
+//             <View>
+//             <TouchableOpacity onPress={()=> createChatRoom()}>
+//                <Text>I'd Love To Do Buisness!!</Text>
+//             </TouchableOpacity>
+//             </View>
+//           </View>
 
         
-    )
+//     )
 
 
 }
@@ -185,12 +230,11 @@ const styles = StyleSheet.create({
 
   header: {
     backgroundColor: '#181717',
-    height: 10,
+    height: 80,
     minHeight: 50,
     color: 'white',
     position: 'absolute',
-    width: '100%',
-    maxWidth: 728,
+    width: "100%",
     top: 0,
     zIndex: 99,
     padding: 10,
@@ -308,5 +352,32 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginVertical: 2,
   },
+
+  profileInfoMainContainer:{
+    justifyContent:"center",
+    padding: 13,
+    backgroundColor: Colors.secondaryColor,
+    width:"95%",
+    height: 100,
+    borderRadius: 20,
+    marginLeft: 39,
+    marginBottom: 5,
+    flexDirection: "row",
+    flexWrap: 'wrap',
+     },
+
+  circle:{
+    position: 'absolute',
+    left: 15,
+    top: 10,
+    backgroundColor: Colors.primaryColor,
+    height: 80,
+    width: 80,
+    borderRadius:180
+  },
+
+  emptySpace:{
+    margin: 45
+  }
 
 })
