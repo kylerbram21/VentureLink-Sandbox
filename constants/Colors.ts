@@ -26,6 +26,6 @@ export const Colors = {
 
   primaryColor: "#365a72",
   secondaryColor: "#6891a9",
-  wool: "dddfde",
+  wool: "DDDFDE",
   Cookie: "A48E7F"
 };
