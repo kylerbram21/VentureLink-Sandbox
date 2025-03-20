@@ -7,6 +7,7 @@ import ParallaxScrollView from '@/components/ParallaxScrollView';
 import DropDownPicker from 'react-native-dropdown-picker';
 import {Colors} from "@/constants/Colors";
 import Dropdown from "../../components/Dropdown"
+import { signOut } from "firebase/auth";
 
 export default function Profile(){
 
@@ -99,6 +100,15 @@ export default function Profile(){
     };
 
    console.log("Super Here")
+
+
+   function signOutUser(){
+    signOut(auth).then(() => {
+      
+   }).catch((error) => {
+     console.log(error)
+   })
+} 
     
     return(
        <ScrollView>
@@ -145,6 +155,10 @@ export default function Profile(){
 
           <TouchableOpacity onPress={()=> handleSave()}>
                <Text>Click</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={()=> signOutUser()}>
+               <Text>Sign Out</Text>
             </TouchableOpacity>
        </View> 
        </ScrollView> 

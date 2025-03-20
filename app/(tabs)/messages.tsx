@@ -109,26 +109,6 @@ export default function Messges(){
 //      const newData = {...companyData, match:[...companyData.match, userId]}
 //      console.log(newData)
         
-//         try{
-//              updateDoc(ref,newData)
-//         }catch(err){
-//             console.log(err)
-//         }
-//     }
-
-//    const createChatRoom = async () => {
-//     const ref = collection(firestore, "chat-rooms")
-//     const chatData = {
-//                     [userId]: [],  
-//                     [koltenUId]: [],            
-//                 }
-
-//         try{
-//             await addDoc(ref, chatData)
-//         }catch(err){
-//             console.log(err)
-//         }
-//    }
 
     
 

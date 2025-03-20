@@ -29,7 +29,7 @@ export default function TabLayout() {
       fontWeight: 'bold',
     },
     headerLeft: ()=> <View style={{display:"flex", height:"100%", flexDirection: "row",  overflow:"hidden"}}><View style={styles.headerLeftContainer}><Text style={styles.headerFont}>Venture Link</Text></View><View style={styles.separator}></View></View>,
-    headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style= {styles.text}>Here</Text></TouchableOpacity>,
+    headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style={styles.text}>Here</Text></TouchableOpacity>,
     headerShown: true,
     tabBarIcon: () => <IconSymbol size={28} name="house.fill" color={Colors.primaryColor} />,
   
@@ -53,7 +53,7 @@ export default function TabLayout() {
       }}>
       <Tabs.Screen
         name="index"
-        options={{...headerOptions, title:""}}
+        options={{...headerOptions, title:"Home"}}
       />
       <Tabs.Screen
         name="explore"
