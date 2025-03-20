@@ -14,7 +14,10 @@ export default function Messges(){
 
     const user = useUser()
 
+    const userInfo = {type:"investor"}
+
     const [chatInfo, setChatInfo] = useState([])
+    const [currentChat, setCurrentChat] = useState({})
 
     useEffect(()=> {
         getData()
@@ -24,29 +27,15 @@ export default function Messges(){
 
     const getData = async () => {
 
-        const newData = []
-          
-        if(true){
-             for(let i = 0; i < shrekDaddy.length; i++){
-                  
-                 newData.push(shrekDaddy[i].companyInfo)
-             }
-
-             setChatInfo(newData)
-        }else{
-
-            for(let i = 0; i < shrekDaddy.length; i++){
-                  
-                newData.push(shrekDaddy[i].investorInfo)
-            }
-
-            setChatInfo(newData)
-        }
+       setChatInfo(shrekDaddy)
+        
 
     }
 
     return(
     <View style={{backgroundColor: Colors.primaryColor}}>
+        { Object.keys(currentChat).length === 0 ?
+        <View>
         <View style={styles.header}>
             <View style={styles.messageText}>
                 <Text>Active Chats</Text>
@@ -58,26 +47,31 @@ export default function Messges(){
         {chatInfo.length > 0 ?
         <View>
         {chatInfo.map((item, index)=> {
+
+            const chat = userInfo.type === "investor" ? item.companyInfo : item.investorInfo
               
             return(
                 <TouchableOpacity
-                  key={`${index}-${item.name}`}
+                  key={`${index}-${chat.name}`}
+                  onPress={()=> setCurrentChat(chatInfo[index])}
                 >
                   <View style={styles.profileInfoMainContainer}>
-                    <Text style={{marginRight:1085, fontSize:35}}>{item.name}</Text>
+                    <Text style={{marginRight:1085, fontSize:35}}>{chat.name}</Text>
                         <View>
-                            <Text style={{marginRight:750, fontSize:25, opacity:0.7}}>{item.messages.length > 0 ? item.messages[item.messages.length - 1]: "No Messages Yet"}</Text>
+                            <Text style={{marginRight:750, fontSize:25, opacity:0.7}}>{chat.messages.length > 0 ? chat.messages[chat.messages.length - 1]: "No Messages Yet"}</Text>
                         </View>
         
                         <View style={styles.circle}>         
-                        <Image style={{ width: 80, height: 80, borderRadius: 180, alignSelf: "center",}} source={{ uri: item.picture}}/>
+                        <Image style={{ width: 80, height: 80, borderRadius: 180, alignSelf: "center",}} source={{ uri: chat.picture}}/>
                         </View>
                 </View>
                 </TouchableOpacity> 
-            )
-        })}
-        </View>
-       : null}
+             )
+           })}
+         </View>
+          : null}
+       </View> :
+       <Chat currentChat={currentChat} setCurrentChat={setCurrentChat} user={userInfo}/>}
         
     </View>
     )
@@ -109,6 +103,26 @@ export default function Messges(){
 //      const newData = {...companyData, match:[...companyData.match, userId]}
 //      console.log(newData)
         
+//         try{
+//              updateDoc(ref,newData)
+//         }catch(err){
+//             console.log(err)
+//         }
+//     }
+
+//    const createChatRoom = async () => {
+//     const ref = collection(firestore, "chat-rooms")
+//     const chatData = {
+//                     [userId]: [],  
+//                     [koltenUId]: [],            
+//                 }
+
+//         try{
+//             await addDoc(ref, chatData)
+//         }catch(err){
+//             console.log(err)
+//         }
+//    }
 
     
 
@@ -381,3 +395,4 @@ const styles = StyleSheet.create({
   }
 
 })
+
