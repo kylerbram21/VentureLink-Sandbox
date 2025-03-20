@@ -5,6 +5,8 @@ import {getDoc, query, setDoc, where} from 'firebase/firestore'
 import {signInWithEmailAndPassword} from 'firebase/auth'
 import {doc, addDoc, getDocs, collection, updateDoc} from "firebase/firestore"
 
+import {v4 as uuidv4} from 'uuid';
+
 
 
 
@@ -42,15 +44,22 @@ export default function Messges(){
         }
     }
 
-   const createChatRoom = async () => {
-    const ref = collection(firestore, "chat-rooms")
+   const createChatRoom = async (investorId:string, companyId:string) => {
+    
+    const uId = uuidv4();
+    
+    const chatRoomRef = collection(firestore, "chat-rooms", uId)
+    const investorRef = doc(firestore, "users", investorId)
+    const companyRef = doc(firestore, "users", companyId) 
+
+
     const chatData = {
                     [userId]: [],  
                     [koltenUId]: [],            
                 }
 
         try{
-            await addDoc(ref, chatData)
+            await addDoc(chatRoomRef, chatData)
         }catch(err){
             console.log(err)
         }
@@ -146,7 +155,7 @@ export default function Messges(){
             </View>
 
             <View>
-            <TouchableOpacity onPress={()=> createChatRoom()}>
+            <TouchableOpacity onPress={()=> console.log("Here")}>
                <Text>I'd Love To Do Buisness!!</Text>
             </TouchableOpacity>
             </View>

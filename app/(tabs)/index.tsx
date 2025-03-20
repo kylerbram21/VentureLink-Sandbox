@@ -1,4 +1,4 @@
-import { Image, StyleSheet, Platform, View } from 'react-native';
+import { Image, StyleSheet, Platform, View, } from 'react-native';
 import { ScrollView, Dimensions } from 'react-native'
 import TinderCard from 'react-tinder-card'
 import { useEffect, useState } from 'react'
@@ -6,18 +6,48 @@ import {useSpring, animated} from '@react-spring/native'
 
 import UserCard from '@/components/UserCard';
 import useUser from "../../hooks/useUser"
+import CompanyCard from '@/components/CompanyCard';
+import { firestore } from "../../firebase";
+import { doc, getDoc } from 'firebase/firestore';
 
 const { width } = Dimensions.get('window');
 
 export default function HomeScreen(){
 
+  const [userInfo, setUserInfo] = useState({})
+
   const user = useUser()
 
-  console.log(user)
+
+  useEffect(()=> {
+    getUserData()
+  }, [useUser()])
+
+  const getUserData = async () =>{
+
+    try{
+     const ref = doc(firestore, "users", user.uid)
+     const snapShot = await getDoc(ref)
+
+     if(snapShot.exists()){
+      const userData = snapShot.data()
+       setUserInfo(userData)
+     
+     }
+    }catch(err){
+
+    }
+  }
 
   return(
     <View>
-      <UserCard />
+      { userInfo.type ?
+      <View>
+        {userInfo.type === "investor" ?
+          <UserCard /> :
+          <CompanyCard />}
+      </View> 
+       : null}
     </View>
   )
 }

@@ -3,135 +3,159 @@ import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Modal, Dimensions
 import { Colors } from "@/constants/Colors"
 import ImageSlider from "./ImageSlider"
 
-import useUser from "@/hooks/useUser"
-
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
-import { FontAwesome, FontAwesome6, } from "@expo/vector-icons";
+import { FontAwesome,} from "@expo/vector-icons";
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { collection, doc, getDoc, getDocs, query, updateDoc, where } from "firebase/firestore"
-import { firestore } from "@/firebase"
+import { collection, doc, getDoc, getDocs, query, setDoc, updateDoc, where } from "firebase/firestore";
+import { firestore } from "../firebase"
+import useUser from "@/hooks/useUser";
+
+import {v4 as uuidv4} from 'uuid';
 
 
 const { width, height } = Dimensions.get("window")
 
-export default function UserCard(){
+export default function CompanyCard(){
 
     const user = useUser()
 
-    const [profileInfoVisible, setProfileInfoVisible] = useState(false)
-    const [profileInfo, setProfileInfo] = useState({name: "", picture: "", industry: "", location: "", model: "", pitchDeck: "", url: "", stage: ""})
-    const [nextProfileInfo, setNextProfileInfo] = useState({name: "", picture: "", industry: "", location: "", model: "", pitchDeck: "", url: "", stage: ""})
-    const [companyFeed, setCompanyFeed] = useState([])
     const [userInfo, setUserInfo] = useState({})
+    const [profileInfoVisible, setProfileInfoVisible] = useState(false)
+    const [profileInfo, setProfileInfo] = useState({})
+    const [nextProfileInfo, setNextProfileInfo] = useState({name: "Deez Nutz Inc", picture: "https://i1.sndcdn.com/artworks-ui4wyyS2cm5nTGl6-3aaEjw-t500x500.jpg", industry: "AI", location: "Orem, UT", portfolioUrl: ""})
+    const [matchedUsers, setMatchedUsers] = useState([])
     const [show, setShow] = useState(true)
     const [startSwipe, setStartSwipe] = useState(false)
     const [direction, setDirection] = useState("right")
 
 
-     useEffect(()=> {
-            getUserData()
-        
-        }, [useUser()])
+    useEffect(()=> {
+        getUserData()
     
-        useEffect(()=> {
-          
-            getCompanyFeed()
-        }, [userInfo])
-    
-    
-        useEffect(()=> {
-             setFeed()
-        }, [companyFeed])
+    }, [useUser()])
+
+    useEffect(()=> {
+      
+        getPotentialInvestors()
+    }, [userInfo])
 
 
-        const getUserData = async () =>{
+    useEffect(()=> {
+         setFeed()
+    }, [matchedUsers])
+    
+    
+      const getUserData = async () =>{
+    
+        try{
+         const ref = doc(firestore, "users", user.uid)
+         const snapShot = await getDoc(ref)
+    
+         if(snapShot.exists()){
+          const userData = snapShot.data()
+           setUserInfo(userData)
+
            
-          try{
-           const ref = doc(firestore, "users", user.uid)
-           const snapShot = await getDoc(ref)
-      
-           if(snapShot.exists()){
-            const userData = snapShot.data()
-             setUserInfo(userData)
-           }
-          }catch(err){
-             console.log(err)
-          }
+         }
+        }catch(err){
+            console.log(err)
         }
-
-        const getCompanyFeed = async() => {
-        
-                try{
-                const companies = userInfo.companies || []
-        
-                
-                
-                const ref = collection(firestore, "users")
-                
-                const q = query(ref, where("__name__", "in", companies))
-                
-                const querySnapshot = await getDocs(q);
-                
-                const matchedUsersSnap:any = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        
-                setCompanyFeed(matchedUsersSnap)
-                }catch(err){
-                    console.log(err)
-                }
-        
-                if(companyFeed.length > 0){
-                    setFeed()
-                }  
-            }
-
-
-            const setFeed = () => {
-
-              if(companyFeed[0]){
-                 setProfileInfo(companyFeed[0])
-      
-                 if(companyFeed[1]){
-                    setNextProfileInfo(companyFeed[1])
-                 }
-              }
-          }
-
-          
-          const addInvestorToCompany = async (companyId:string, investorId:string) => {
-      
-            const companyRef = doc(firestore, "users", companyId) 
-        
-        
-            const newCompanyData = {...profileInfo, match: [...profileInfo.match, investorId]}
-                  
-                try{
-                    await updateDoc(companyRef, newCompanyData)
-    
-                }catch(err){
-                    console.log(err)
-                }
-           }
-    
-    const swipe = (direction:string) => {
-
-      setDirection(direction)
-      setStartSwipe(true)
-      
-
-      if(direction === "right"){
-
-         addInvestorToCompany(profileInfo.id, user.uid)
-
       }
 
-      setTimeout(() => {
-          
-          const newConpanyFeed = companyFeed.slice(1)
-          setCompanyFeed(newConpanyFeed)
-          setStartSwipe(false)
+      const createChatRoom = async (investorId:string, companyId:string) => {
+    
+        const uId = uuidv4();
+        
+        const chatRoomRef = doc(firestore, "chat-rooms", uId)
+        const investorRef = doc(firestore, "users", investorId)
+        const companyRef = doc(firestore, "users", companyId) 
+    
+    
+        const chatData = {
+                        [companyId]: [],  
+                        [investorId]: [],            
+                    }
+              
+            try{
+                await setDoc(chatRoomRef, chatData)
 
-      }, 500);
+                const newInvestorData = {...profileInfo, chatRooms: [...profileInfo.chatRooms, uId]}
+                const newCompanyData = {...userInfo, chatRooms: [...userInfo.chatRooms, uId]}
+
+                await updateDoc(investorRef, newInvestorData)
+                await updateDoc(companyRef, newCompanyData)
+            }catch(err){
+                console.log(err)
+            }
+       }
+
+      
+
+    const getPotentialInvestors = async() => {
+
+        try{
+        const match = userInfo.match || []
+
+        
+        
+        const ref = collection(firestore, "users")
+        
+        const q = query(ref, where("__name__", "in", match))
+        
+        const querySnapshot = await getDocs(q);
+        
+        const matchedUsersSnap:any = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        setMatchedUsers(matchedUsersSnap)
+        }catch(err){
+            console.log(err)
+        }
+
+        if(matchedUsers.length > 0){
+            setFeed()
+        }
+      
+        
+    }
+
+    const setFeed = () => {
+
+        if(matchedUsers[0]){
+           setProfileInfo(matchedUsers[0])
+
+           if(matchedUsers[1]){
+              setNextProfileInfo(matchedUsers[1])
+           }else{
+        
+           
+           }
+        }
+
+   
+    }
+
+    const swipe = (direction:string) => {
+
+        setDirection(direction)
+        setStartSwipe(true)
+        
+
+        if(direction === "right"){
+
+           createChatRoom(profileInfo.id, user.uid)
+
+        }
+
+        setTimeout(() => {
+            
+            const newMatchedUsers = matchedUsers.slice(1)
+            setMatchedUsers(newMatchedUsers)
+            setStartSwipe(false)
+
+        }, 500);
+
+       
 
     }
 
@@ -159,7 +183,7 @@ export default function UserCard(){
                   >
                      <AntDesign name="check" size={50} color="green" />
                   </TouchableOpacity>
-                </View>
+                </View>    
               </View>
             </View>
             <Modal
@@ -185,14 +209,6 @@ export default function UserCard(){
                       <Entypo name="location-pin" size={35} color="black" />
                       <Text style={styles.statText}>{profileInfo.location}</Text>
                     </View>
-                    <View style={styles.statContainer}>
-                      <Entypo name="credit" size={35} color="black" />
-                      <Text style={styles.statText}>{profileInfo.model}</Text>
-                    </View>
-                    <View style={styles.statContainer}>
-                      <FontAwesome6 name="seedling" size={35} color="black" />
-                      <Text style={styles.statText}>{profileInfo.stage}</Text>
-                    </View>
                  </View>
                  <View style={{...styles.profileInfoMiniContainer, alignItems:"center"}}>
                    <Fontisto name="locked" size={60} color="black" />
@@ -209,7 +225,7 @@ const styles = StyleSheet.create({
     introMainContainer:{
       display:"flex",
       alignItems: "center",
-      width: "100%",
+      width: "100%"
     },
     buttonsMainContainer:{
       maxWidth: 700,
@@ -231,6 +247,22 @@ const styles = StyleSheet.create({
         borderRadius: 70,
         backgroundColor: "#fff"
      }, 
+    websiteButtonContainer:{
+       display: "flex",
+       alignItems: "center",
+       justifyContent: "center",
+       marginBottom: 20,
+       paddingHorizontal: 20
+    },
+    websiteButton:{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        width:"100%",
+        height: 50,
+        borderRadius: 20,
+        backgroundColor: "#fff",
+     },
      profileInfoMainContainer:{
         display: "flex",
         padding: 20,
