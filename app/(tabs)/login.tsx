@@ -50,24 +50,24 @@ export default function LoginScreen() {
            source={require("../../assets/images/react-logo.png")}
          />
           <View>
-          <Text >Welcome to Skill Build</Text>
+          <Text >Welcome to VentureLink</Text>
           <View> 
           <Text style={{...styles.words}}>Login to your Account!</Text>
             <View style={styles.inputContainer}>
               <View style={styles.icon}>
-                <Feather name="mail" size={22} color="#7C808D"/> 
+                <Feather name="mail" size={22} color="#000"/> 
               </View>
                 <TextInput 
                   value={email}
                   onChangeText={(newText)=> setEmail(newText)}
                   style={styles.input} 
                   placeholder="Email" 
-                  placeholderTextColor="#7C808D" 
-                  selectionColor={"#3662AA"}/>
+                  placeholderTextColor="#000" 
+                  selectionColor={"#000"}/>
             </View>
             <View style={styles.inputContainer}>
               <View style={styles.icon}>
-                <Feather name="lock" size={22} color="#7C808D"/> 
+                <Feather name="lock" size={22} color="#000"/> 
               </View>
                 <TextInput 
                   value={password}
@@ -75,14 +75,14 @@ export default function LoginScreen() {
                   secureTextEntry={!showPasword}
                   style={styles.input} 
                   placeholder="Password" 
-                  placeholderTextColor="#7C808D" 
-                  selectionColor={"#3662AA"}
+                  placeholderTextColor="#000" 
+                  selectionColor={"#000"}
                 />
                 <TouchableOpacity 
                   style={styles.passwordVisibleButton}
                   onPress={()=> setShowPassword(!showPasword)}  
                 >
-                  <Feather name="eye-off" size={20} color="#7C808D"/>
+                  <Feather name="eye-off" size={20} color="#000"/>
                 </TouchableOpacity>
             </View>
             <TouchableOpacity style={styles.forgotPasswordButton}>
@@ -121,8 +121,8 @@ export default function LoginScreen() {
               onChangeText={(newText)=> setEmail(newText)}
               style={styles.input} 
               placeholder="Email" 
-              placeholderTextColor="#7C808D" 
-              selectionColor={"#3662AA"}/>
+              placeholderTextColor="#000" 
+              selectionColor={"#000"}/>
           </View>
           <View style={styles.inputContainer}>
             <View style={styles.icon}>
@@ -174,7 +174,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: Colors.secondaryColor,
   },
 
   inputContainer: {

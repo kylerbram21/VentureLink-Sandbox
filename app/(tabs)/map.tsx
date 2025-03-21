@@ -1,9 +1,11 @@
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native";
 import React, {useRef, useState} from 'react'
-import  firestore from "../../firebase"
+import  {auth, firestore} from "../../firebase"
 import {addDoc, collection } from "firebase/firestore"
 import Dropdown from "../../components/Dropdown"
 import { ScrollView, Image } from "react-native"
+import { Swipeable } from "react-native-gesture-handler";
+import { Colors } from "@/constants/Colors"
 
 export default function Messges(){
     const [message, setMessage] = useState("")
@@ -12,39 +14,25 @@ export default function Messges(){
 
 
 return(
-    <View style={{ padding: 20, backgroundColor: "#fff", height: 1000, width: "100%" }}>
-       <ScrollView style={styles.filler}
-         horizontal={true}
-         contentContainerStyle={
-            {display: "flex",
-              flexDirection: "row"
-            }
-         }
-       >
-          <View style={styles.logoConatiner}>
-              <Image style={{alignSelf: "center", marginBottom: 90, marginTop: 90}} source={require('../../assets/images/VentureLinkLogo.webp')}/>
-          </View>
-          <View style={styles.logoConatiner}>
-            <Image style={{alignSelf: "center", marginBottom: 90, marginTop: 90}} source={require('../../assets/images/VentureLinkLogo.webp')}/>
-          </View>
-        </ScrollView>
-    </View>
+   <View style={styles.mainBody}>
+        <View>
+        <Image style={{ width: '100%', height: 650,  }} source={require('../../assets/images/TempMap.png')}/>
+        </View>   
+   </View>
 )
 
 }
 
 const styles = StyleSheet.create({
-    filler:{
-      backgroundColor: "#000",
-      width: 150, 
-      height: 200, 
-      flexDirection: "row"
-    },
-    logoConatiner: {
-     width: "100%",
-     height: "50%",
-     borderStyle: "solid",
-      borderColor: "red",
-      borderWidth: 1
+    mainBody:{
+            height: '100%',
+            width: '100%',
+            backgroundColor: Colors.secondaryColor
+          },
+    
+    ColorBlock:{
+        height:500,
+        width: 500,
+        backgroundColor: Colors.primaryColor
     }
   })
