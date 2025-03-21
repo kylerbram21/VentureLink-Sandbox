@@ -29,7 +29,7 @@ export default function TabLayout() {
       fontWeight: 'bold',
     },
     headerLeft: ()=> <View style={{display:"flex", height:"100%", flexDirection: "row",  overflow:"hidden"}}><View style={styles.headerLeftContainer}><Text style={styles.headerFont}>Venture Link</Text></View><View style={styles.separator}></View></View>,
-    headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style={styles.text}>Here</Text></TouchableOpacity>,
+    headerRight: () => <TouchableOpacity style={{marginRight: 20}} onPress={() => console.log("Here")} > <Feather name="sliders" size={25} color="#000"/> </TouchableOpacity>,
     headerShown: true,
     tabBarIcon: () => <IconSymbol size={28} name="house.fill" color={Colors.primaryColor} />,
   
@@ -60,13 +60,13 @@ export default function TabLayout() {
         options={{
           title: 'Explore',
           headerStyle:{
-            backgroundColor: '#000',
+            backgroundColor: Colors.primaryColor,
           },
           headerTintColor: '#fff',
           headerTitleStyle: {
             fontWeight: 'bold',
           },
-          headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style={styles.text}>Here</Text></TouchableOpacity>,
+          headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > </TouchableOpacity>,
           headerShown: true,
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
         }}
@@ -77,7 +77,7 @@ export default function TabLayout() {
       options={{
         title: 'Maps',
         headerStyle:{
-          backgroundColor: '#000',
+          backgroundColor: Colors.primaryColor,
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -86,7 +86,7 @@ export default function TabLayout() {
           fontWeight: 'bold',
         },
 
-        headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} ><Text style={styles.text}>Here</Text></TouchableOpacity>,
+        headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} ></TouchableOpacity>,
           headerShown: true,
         tabBarIcon: ({ color }) => <Feather name="map-pin" size={24} color={color} />,
       }}
@@ -97,14 +97,14 @@ export default function TabLayout() {
       options={{
         title: 'Messages',
         headerStyle:{
-          backgroundColor: '#000',
+          backgroundColor: Colors.primaryColor,
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
           fontWeight: 'bold',
         },
 
-        headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style= {styles.text}>Here</Text></TouchableOpacity>,
+        headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} ></TouchableOpacity>,
           headerShown: true,
         tabBarIcon: ({ color }) => <AntDesign name="message1" size={24} color={color} />,
       }}
@@ -123,7 +123,7 @@ export default function TabLayout() {
           fontWeight: 'bold',
         },
         
-        headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} > <Text style= {styles.text}>Here</Text></TouchableOpacity>,
+        headerRight: () => <TouchableOpacity onPress={() => console.log("Here")} ></TouchableOpacity>,
           headerShown: true,
         tabBarIcon: ({ color }) => <FontAwesome name="building" size={24} color={color} />,
       }}

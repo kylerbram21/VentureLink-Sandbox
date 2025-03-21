@@ -6,6 +6,7 @@ import {signInWithEmailAndPassword} from 'firebase/auth'
 import {doc, addDoc, getDocs, collection, updateDoc} from "firebase/firestore"
 import { Colors } from "@/constants/Colors"
 import useUser from "@/hooks/useUser";
+import Chat from "../../components/Chat"
 
 const shrekDaddy = [{id: "1", companyInfo: {name: "Shrek Inc", picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAs_TDUTeHiZQ1tqLJlvItaBOjcmRTeoSbHw&s", messages: ["Shrek is Love, Shrek is Life"]}, investorInfo: {name: "", picture: "", messages: []}}, {id: "2", companyInfo: {name: "Trump Towers", picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/TrumpPortrait.jpg/800px-TrumpPortrait.jpg", messages: []}, investorInfo: {name: "", picture: "", messages: []}}, {id: "3", companyInfo: {name: "Faster than Light", picture: "https://us-tuna-sounds-images.voicemod.net/d748fc13-151a-47d5-b515-c21b41cda87c-1658461428512.jpg", messages: []}, investorInfo: {name: "", picture: "", messages: []}}]
 
@@ -36,11 +37,7 @@ export default function Messges(){
     <View style={{backgroundColor: Colors.primaryColor}}>
         { Object.keys(currentChat).length === 0 ?
         <View>
-        <View style={styles.header}>
-            <View style={styles.messageText}>
-                <Text>Active Chats</Text>
-            </View>
-        </View>
+       
         <View style={styles.emptySpace}>
         
         </View>
