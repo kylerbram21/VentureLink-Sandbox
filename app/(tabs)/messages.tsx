@@ -1,4 +1,4 @@
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from "react-native";
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image, Dimensions } from "react-native";
 import {useEffect, useRef, useState} from 'react'
 import  {auth ,firestore} from "../../firebase"
 import {getDoc, query, setDoc, where} from 'firebase/firestore'
@@ -10,65 +10,103 @@ import Chat from "../../components/Chat"
 
 const shrekDaddy = [{id: "1", companyInfo: {name: "Shrek Inc", picture: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAs_TDUTeHiZQ1tqLJlvItaBOjcmRTeoSbHw&s", messages: ["Shrek is Love, Shrek is Life"]}, investorInfo: {name: "", picture: "", messages: []}}, {id: "2", companyInfo: {name: "Trump Towers", picture: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/TrumpPortrait.jpg/800px-TrumpPortrait.jpg", messages: []}, investorInfo: {name: "", picture: "", messages: []}}, {id: "3", companyInfo: {name: "Faster than Light", picture: "https://us-tuna-sounds-images.voicemod.net/d748fc13-151a-47d5-b515-c21b41cda87c-1658461428512.jpg", messages: []}, investorInfo: {name: "", picture: "", messages: []}}]
 
+const { height } = Dimensions.get("window")
 
 export default function Messges(){
 
     const user = useUser()
 
-    const userInfo = {type:"investor"}
-
+    
+    const [userInfo, setUserInfo] = useState({})
     const [chatInfo, setChatInfo] = useState([])
     const [currentChat, setCurrentChat] = useState({})
+    
+    
+      useEffect(()=> {
+        getUserData()
+      }, [useUser()])
 
-    useEffect(()=> {
-        getData()
-    },[])
+      useEffect(()=> {
+    
+        if(Object.keys(userInfo).length !== 0){
+          getChats()
+        }
+      }, [userInfo])
 
 
-
-    const getData = async () => {
-
-       setChatInfo(shrekDaddy)
+      const getChats = async() => {
+        try{
         
+          const chats = userInfo.chatRooms || []
+  
+          
+          
+          const ref = collection(firestore, "chat-rooms")
+          
+          const q = query(ref, where("__name__", "in", chats))
+          
+          const querySnapshot = await getDocs(q);
+          
+          const chatRooms:any = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
+           setChatInfo(chatRooms)
+          }catch(err){
+              console.log(err)
+          }
 
-    }
+        
+      }
+    
+      const getUserData = async () =>{
+    
+        try{
+         const ref = doc(firestore, "users", user.uid)
+         const snapShot = await getDoc(ref)
+    
+         if(snapShot.exists()){
+          
+          const userData = snapShot.data()
+          console.log(userInfo)
+          setUserInfo(userData)
+          console.log(userInfo)
+         
+         }
+        }catch(err){
+    
+        }
+      }
+
+
 
     return(
-    <View style={{backgroundColor: Colors.primaryColor}}>
+    <View style={{backgroundColor: Colors.primaryColor, height: height}}>
         { Object.keys(currentChat).length === 0 ?
         <View>
-       
-        <View style={styles.emptySpace}>
-        
-        </View>
-        {chatInfo.length > 0 ?
-        <View>
-        {chatInfo.map((item, index)=> {
+          <Text style={{fontSize: 40, color:"#fff", marginTop: 20, marginBottom: 20, marginLeft: 20}}>Chat Rooms:</Text>
+          {chatInfo.length > 0 ?
+            <View>
+              {chatInfo.map((item, index)=> {
 
-            const chat = userInfo.type === "investor" ? item.companyInfo : item.investorInfo
+                 const chat = userInfo.type === "investor" ? item.companyInfo : item.investorInfo
               
-            return(
-                <TouchableOpacity
-                  key={`${index}-${chat.name}`}
-                  onPress={()=> setCurrentChat(chatInfo[index])}
-                >
-                  <View style={styles.profileInfoMainContainer}>
-                    <Text style={{marginRight:1085, fontSize:35}}>{chat.name}</Text>
-                        <View>
-                            <Text style={{marginRight:750, fontSize:25, opacity:0.7}}>{chat.messages.length > 0 ? chat.messages[chat.messages.length - 1]: "No Messages Yet"}</Text>
-                        </View>
-        
-                        <View style={styles.circle}>         
-                        <Image style={{ width: 80, height: 80, borderRadius: 180, alignSelf: "center",}} source={{ uri: chat.picture}}/>
-                        </View>
-                </View>
+                 return(
+                    <TouchableOpacity
+                      key={`${index}-${chat.name}`}
+                      onPress={()=> setCurrentChat(chatInfo[index])}
+                      style={styles.profileInfoMainContainer}
+                    >
+                      <Image style={{ width: 80, height: 80, borderRadius: 180, alignSelf: "center",}} source={{ uri: chat.picture}}/>
+                      <View style={styles.textContainer}>
+                          <Text style={{fontSize:35}}>{chat.name}</Text>
+                          <Text style={{ fontSize:25, opacity:0.5, marginLeft: 20}}>{"No Messages Yet"}</Text>
+                      </View> 
                 </TouchableOpacity> 
              )
            })}
          </View>
           : null}
        </View> :
-       <Chat currentChat={currentChat} setCurrentChat={setCurrentChat} user={userInfo}/>}
+       <Chat currentChat={currentChat} setCurrentChat={setCurrentChat} type={userInfo.type}/>}
         
     </View>
     )
@@ -365,14 +403,13 @@ const styles = StyleSheet.create({
   },
 
   profileInfoMainContainer:{
-    justifyContent:"center",
     padding: 13,
     backgroundColor: Colors.secondaryColor,
     width:"95%",
     height: 100,
     borderRadius: 20,
     marginLeft: 39,
-    marginBottom: 5,
+    marginBottom: 10,
     flexDirection: "row",
     flexWrap: 'wrap',
      },
@@ -389,6 +426,9 @@ const styles = StyleSheet.create({
 
   emptySpace:{
     margin: 45
+  },
+  textContainer:{
+    marginLeft: 20
   }
 
 })
