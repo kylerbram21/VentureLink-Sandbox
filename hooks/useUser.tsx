@@ -14,8 +14,7 @@ export default function useUser(){
         onAuthStateChanged(auth, (user:any) => {
             if(user) {
               setUser(user)
-              console.log("Signed in")
-              router.push("/(tabs)")
+             // router.push("/(tabs)")
             }else{
               router.push("/login")
               
