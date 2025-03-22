@@ -36,12 +36,11 @@ export default function Chat(props: any) {
     try {
       const ref = doc(firestore, "chat-rooms", currentChat.id);
       const newMsg = { time: Date.now(), owner: type, message: newMessage };
-
+  
       const updatedData = {
-        ...currentChat,
-        messages: [...(currentChat.messages || []), newMsg],
+        messages: [...messages, newMsg], // ✅ use current state, not stale data
       };
-
+  
       await updateDoc(ref, updatedData);
       setNewMessage("");
     } catch (err) {

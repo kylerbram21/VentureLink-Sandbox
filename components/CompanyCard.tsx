@@ -73,8 +73,10 @@ export default function CompanyCard(){
     
     
         const chatData = {
-                        [companyId]: [],  
-                        [investorId]: [],            
+                        id: uId,
+                        companyInfo: {name: userInfo.name, picture: userInfo.picture},  
+                        investorInfo: {name: profileInfo.name, picture: profileInfo.picture}, 
+                        messages: []       
                     }
               
             try{
