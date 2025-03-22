@@ -1,10 +1,8 @@
 import { useState, useEffect, useRef } from "react"
-import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Modal, Dimensions } from "react-native"
+import { ScrollView, StyleSheet, TouchableOpacity, View, Text, Modal, Dimensions, Image } from "react-native"
 import { Colors } from "@/constants/Colors"
 import ImageSlider from "./ImageSlider"
-
 import useUser from "@/hooks/useUser"
-
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';
 import { FontAwesome, FontAwesome6, } from "@expo/vector-icons";
@@ -20,8 +18,8 @@ export default function UserCard(){
     const user = useUser()
 
     const [profileInfoVisible, setProfileInfoVisible] = useState(false)
-    const [profileInfo, setProfileInfo] = useState({name: "", picture: "", industry: "", location: "", model: "", pitchDeck: "", url: "", stage: ""})
-    const [nextProfileInfo, setNextProfileInfo] = useState({name: "", picture: "", industry: "", location: "", model: "", pitchDeck: "", url: "", stage: ""})
+    const [profileInfo, setProfileInfo] = useState({name: "", picture: "", industry: "", location: "", model: "", pitchDeck: "", url: "", stage: "",  pitchDeck1: "", pitchDeck2: "", pitchDeck3: "",})
+    const [nextProfileInfo, setNextProfileInfo] = useState({name: "", picture: "", industry: "", location: "", model: "", pitchDeck: "", url: "", stage: "", pitchDeck1: "", pitchDeck2: "", pitchDeck3: "",  })
     const [companyFeed, setCompanyFeed] = useState([])
     const [userInfo, setUserInfo] = useState({})
     const [show, setShow] = useState(true)
@@ -93,7 +91,8 @@ export default function UserCard(){
       
                  if(companyFeed[1]){
                     setNextProfileInfo(companyFeed[1])
-                 }
+                 
+                  }                  
               }
           }
 
@@ -194,6 +193,15 @@ export default function UserCard(){
                       <Text style={styles.statText}>{profileInfo.stage}</Text>
                     </View>
                  </View>
+                 <View style={{...styles.profilePicMiniContainer, alignItems:"center"}}>
+                      <Image style={styles.testPic} source={{uri: `${profileInfo.pitchDeck1}`}} resizeMode="cover"/>
+                 </View>
+                 <View style={{...styles.profilePicMiniContainer, alignItems:"center"}}>
+                      <Image style={styles.testPic} source={{uri: `${profileInfo.pitchDeck2}`}} resizeMode="cover"/>
+                 </View>
+                 <View style={{...styles.profilePicMiniContainer, alignItems:"center"}}>
+                      <Image style={styles.testPic} source={{uri: `${profileInfo.pitchDeck3}`}} resizeMode="cover"/>
+                 </View>
                  <View style={{...styles.profileInfoMiniContainer, alignItems:"center"}}>
                    <Fontisto name="locked" size={60} color="black" />
                    <Text style={styles.statText}>Locked Until Matched</Text>
@@ -237,7 +245,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         alignSelf: "flex-end",
         backgroundColor: "#eee",
-        height: height - 125,
+        height: height * 2.65,
         width: width,
         marginTop: 125,
         borderTopLeftRadius: 20,
@@ -267,5 +275,21 @@ const styles = StyleSheet.create({
      statText:{
         fontSize: 20,
         marginLeft: 5
-     }
+     },
+
+     testPic:{
+      height:'75%',
+      width: '75%'
+     },
+    
+     profilePicMiniContainer:{
+      display: "flex",
+      justifyContent:"space-evenly",
+      padding: 13,
+      backgroundColor: "#fff",
+      width:400,
+      height: 450,
+      borderRadius: 20,
+      marginBottom: 25
+   },
 })
